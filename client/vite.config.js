@@ -8,6 +8,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  optimizeDeps: {
+    include: ['scheduler'],
+  },
   server: {
     port: 5173,
     // Proxy API requests to backend during development
