@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
+    "dev": "node node_modules/vite/bin/vite.js",
+    "build": "node node_modules/vite/bin/vite.js build",
+    "lint": "node node_modules/oxlint/bin/oxlint",
+    "preview": "node node_modules/vite/bin/vite.js preview"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",
@@ -18,13 +18,17 @@
     "react-dom": "^19.2.8",
     "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.18.3",
-    "recharts": "^3.10.1"
+    "recharts": "^3.10.1",
+    "source-map-js": "^1.2.1"
   },
   "devDependencies": {
+    "@rolldown/binding-win32-x64-msvc": "^1.2.8",
+    "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "oxlint": "^1.81.0",
+    "tailwindcss": "^4.3.3",
     "vite": "^8.3.0"
   }
 }
