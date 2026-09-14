@@ -11,6 +11,10 @@ const errorHandler = require('./middleware/errorHandler');
 // Connect to MongoDB
 connectDB();
 
+// Register Mongoose models
+require('./models/Department');
+require('./models/User');
+
 const app = express();
 
 // ─── Middleware ───────────────────────────────────────────────────────────────

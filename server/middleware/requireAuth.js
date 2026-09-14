@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Department = require('../models/Department');
 
 // This middleware checks if the user is logged in via JWT cookie
 const requireAuth = async (req, res, next) => {

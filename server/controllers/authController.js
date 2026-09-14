@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
+const Department = require('../models/Department');
 
 // Helper to create and send JWT as HTTP-only cookie
 const sendTokenCookie = (res, userId) => {
