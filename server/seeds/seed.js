@@ -23,6 +23,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const Department = require('../models/Department');
+const Ticket = require('../models/Ticket');
 
 const connectDB = async () => {
   try {
@@ -41,7 +42,8 @@ const seed = async () => {
   console.log('🗑️  Clearing existing data...');
   await User.deleteMany({});
   await Department.deleteMany({});
-  console.log('✅ Cleared Users and Departments.');
+  await Ticket.deleteMany({});
+  console.log('✅ Cleared Users, Departments, and Tickets.');
 
   // ── Create Departments ────────────────────────────────────────────────────
   console.log('🏢 Creating departments...');
@@ -196,6 +198,129 @@ const seed = async () => {
   }
 
   console.log(`\n✅ Seeding complete! Created ${createdUsers.length} users.\n`);
+
+  // ── Create Demo Tickets ───────────────────────────────────────────────────
+  console.log('🎫 Creating demo tickets...');
+  const userMap = {};
+  createdUsers.forEach((u) => {
+    userMap[u.email] = u;
+  });
+
+  const supportUser = userMap['support@itflow.local'];
+  const supportUser2 = userMap['support2@itflow.local'];
+  const hrEmployee = userMap['employee@itflow.local'];
+  const mktgEmployee = userMap['maria.garcia@itflow.local'];
+  const opsEmployee = userMap['carlos.villanueva@itflow.local'];
+  const financeEmployee = userMap['patrick.aquino@itflow.local'];
+
+  const ticketsToCreate = [
+    {
+      title: 'Laptop screen flickering and distorted display',
+      description: 'My ThinkPad laptop screen starts flickering violently whenever I plug into the external dock. It happens multiple times an hour and disrupts work.',
+      category: 'hardware',
+      priority: 'critical',
+      status: 'open',
+      createdBy: hrEmployee._id,
+      department: hrEmployee.department,
+      assignedTo: null,
+      comments: [
+        {
+          author: hrEmployee._id,
+          text: 'I tested with another HDMI cable and the issue persists.',
+          isInternal: false,
+        },
+      ],
+    },
+    {
+      title: 'Cannot access internal VPN and shared network drives',
+      description: 'After the recent Windows update, FortiClient VPN fails at 98% with credential negotiation error. I cannot access the Z: finance drive.',
+      category: 'network',
+      priority: 'high',
+      status: 'in_progress',
+      createdBy: financeEmployee._id,
+      department: financeEmployee.department,
+      assignedTo: supportUser._id,
+      comments: [
+        {
+          author: supportUser._id,
+          text: 'Checking RADIUS server logs for authentication timeout.',
+          isInternal: true,
+        },
+        {
+          author: supportUser._id,
+          text: 'Hi Patrick, I have reset your VPN token certificate. Please try reconnecting in 5 minutes.',
+          isInternal: false,
+        },
+      ],
+    },
+    {
+      title: 'Request license key for Adobe Creative Cloud',
+      description: 'Need Adobe Illustrator and Photoshop license for upcoming company marketing collateral and social media banners.',
+      category: 'software',
+      priority: 'medium',
+      status: 'pending_user',
+      createdBy: mktgEmployee._id,
+      department: mktgEmployee.department,
+      assignedTo: supportUser2._id,
+      comments: [
+        {
+          author: supportUser2._id,
+          text: 'Hi Maria, please have your department manager reply with approval so we can allocate the license from our pool.',
+          isInternal: false,
+        },
+      ],
+    },
+    {
+      title: 'Need database access to Q3 Financial Reporting schema',
+      description: 'Requesting read-only replica access to the postgres reporting database for end-of-quarter financial audits.',
+      category: 'access',
+      priority: 'medium',
+      status: 'open',
+      createdBy: financeEmployee._id,
+      department: financeEmployee.department,
+      assignedTo: null,
+    },
+    {
+      title: 'Replacement HDMI adapter needed for Conference Room B',
+      description: 'The USB-C to HDMI dongle in Conference Room B is bent and loses audio signal intermittently during client presentations.',
+      category: 'hardware',
+      priority: 'low',
+      status: 'resolved',
+      createdBy: opsEmployee._id,
+      department: opsEmployee.department,
+      assignedTo: supportUser._id,
+      resolvedAt: new Date(Date.now() - 86400000),
+      resolutionNotes: 'Replaced with a brand new Anker USB-C to 4K HDMI adapter from storage room.',
+      comments: [
+        {
+          author: supportUser._id,
+          text: 'Installed new cable and tested presentation video and audio successfully.',
+          isInternal: false,
+        },
+      ],
+    },
+    {
+      title: 'Microsoft Teams crashing repeatedly on launch',
+      description: 'Teams desktop app crashes immediately with a JavaScript error after login screen.',
+      category: 'software',
+      priority: 'medium',
+      status: 'closed',
+      createdBy: hrEmployee._id,
+      department: hrEmployee.department,
+      assignedTo: supportUser._id,
+      resolvedAt: new Date(Date.now() - 172800000),
+      closedAt: new Date(Date.now() - 86400000),
+      resolutionNotes: 'Cleared Teams local app cache in %AppData%\\Microsoft\\Teams and restarted.',
+    },
+  ];
+
+  for (const tData of ticketsToCreate) {
+    const ticket = new Ticket(tData);
+    await ticket.save();
+    console.log(`  ✓ Created ticket: [${ticket.ticketId}] ${ticket.title}`);
+  }
+
+  console.log(`\n✅ Created ${ticketsToCreate.length} demo tickets.\n`);
 
   console.log('═══════════════════════════════════════════════════════════');
   console.log('  DEMO ACCOUNTS');

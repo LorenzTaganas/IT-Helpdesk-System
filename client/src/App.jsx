@@ -5,6 +5,9 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import AppLayout from './layouts/AppLayout';
 import LoginPage from './pages/auth/LoginPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
+import TicketListPage from './pages/tickets/TicketListPage';
+import CreateTicketPage from './pages/tickets/CreateTicketPage';
+import TicketDetailPage from './pages/tickets/TicketDetailPage';
 
 // Placeholder pages — will be replaced in later phases
 const ComingSoon = ({ title }) => (
@@ -44,10 +47,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/tickets" element={<ComingSoon title="Tickets" />} />
-              <Route path="/tickets/new" element={<ComingSoon title="Create Ticket" />} />
-              <Route path="/tickets/assigned" element={<ComingSoon title="My Assigned Tickets" />} />
-              <Route path="/tickets/:id" element={<ComingSoon title="Ticket Detail" />} />
+              <Route path="/tickets" element={<TicketListPage />} />
+              <Route path="/tickets/new" element={<CreateTicketPage />} />
+              <Route path="/tickets/assigned" element={<TicketListPage />} />
+              <Route path="/tickets/:id" element={<TicketDetailPage />} />
               <Route path="/assets" element={<ComingSoon title="Assets" />} />
               <Route path="/assets/:id" element={<ComingSoon title="Asset Detail" />} />
               <Route path="/employees" element={<ComingSoon title="Employees" />} />

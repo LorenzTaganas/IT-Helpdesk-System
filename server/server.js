@@ -14,6 +14,7 @@ connectDB();
 // Register Mongoose models
 require('./models/Department');
 require('./models/User');
+require('./models/Ticket');
 
 const app = express();
 
@@ -46,7 +47,9 @@ app.use('/api/auth/login', loginLimiter);
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 
+const ticketRoutes = require('./routes/ticketRoutes');
 app.use('/api/auth', authRoutes);
+app.use('/api/tickets', ticketRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
