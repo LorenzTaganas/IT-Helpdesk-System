@@ -16,6 +16,7 @@ import DepartmentsPage from './pages/departments/DepartmentsPage';
 import ReportsPage from './pages/reports/ReportsPage';
 import AuditLogsPage from './pages/audit/AuditLogsPage';
 import ProfilePage from './pages/profile/ProfilePage';
+import SettingsPage from './pages/settings/SettingsPage';
 
 // Placeholder pages — will be replaced in later phases
 const ComingSoon = ({ title }) => (
@@ -68,7 +69,7 @@ function App() {
               <Route path="/departments" element={<DepartmentsPage />} />
               <Route path="/reports" element={<ReportsPage />} />
               <Route path="/audit-logs" element={<AuditLogsPage />} />
-              <Route path="/settings" element={<ComingSoon title="Settings" />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
             </Route>
           </Route>
