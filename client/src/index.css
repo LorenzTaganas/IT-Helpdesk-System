@@ -380,6 +380,125 @@
     cursor: pointer;
   }
 
+  .table-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 0.8125rem;
+    color: var(--text-primary);
+  }
+
+  .data-table th {
+    padding: 0.75rem 1rem;
+    background: var(--bg-muted);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .data-table td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid #eef2f7;
+    vertical-align: middle;
+  }
+
+  .data-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .data-table tbody tr:hover {
+    background: var(--bg-muted);
+  }
+
+  .data-table a,
+  .data-table p {
+    min-width: 0;
+  }
+
+  .dashboard-table {
+    min-width: 720px;
+  }
+
+  .dashboard-table th:nth-child(1),
+  .dashboard-table td:nth-child(1) {
+    width: 105px;
+  }
+
+  .dashboard-table th:nth-child(2),
+  .dashboard-table td:nth-child(2) {
+    width: 39%;
+  }
+
+  .dashboard-table th:nth-child(3),
+  .dashboard-table td:nth-child(3),
+  .dashboard-table th:nth-child(4),
+  .dashboard-table td:nth-child(4) {
+    width: 105px;
+  }
+
+  .dashboard-table th:nth-child(5),
+  .dashboard-table td:nth-child(5) {
+    width: 170px;
+  }
+
+  .dashboard-table th:nth-child(6),
+  .dashboard-table td:nth-child(6) {
+    width: 105px;
+  }
+
+  .ticket-table {
+    min-width: 1040px;
+  }
+
+  .ticket-table th:nth-child(1),
+  .ticket-table td:nth-child(1) {
+    width: 105px;
+  }
+
+  .ticket-table th:nth-child(2),
+  .ticket-table td:nth-child(2) {
+    width: 31%;
+  }
+
+  .ticket-table th:nth-child(3),
+  .ticket-table td:nth-child(3),
+  .ticket-table th:nth-child(4),
+  .ticket-table td:nth-child(4) {
+    width: 110px;
+  }
+
+  .ticket-table th:nth-child(5),
+  .ticket-table td:nth-child(5),
+  .ticket-table th:nth-child(6),
+  .ticket-table td:nth-child(6) {
+    width: 165px;
+  }
+
+  .ticket-table th:nth-child(7),
+  .ticket-table td:nth-child(7) {
+    width: 105px;
+  }
+
+  @media (max-width: 640px) {
+    .data-table th,
+    .data-table td {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+  }
+
   /* ── Page Header ──────────────────────────────────────── */
   .page-header {
     display: flex;

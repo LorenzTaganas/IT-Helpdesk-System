@@ -53,8 +53,8 @@ const TicketDetailPage = () => {
   const [showResolutionBox, setShowResolutionBox] = useState(false);
   const [resolutionNotes, setResolutionNotes] = useState('');
 
-  const isStaff = user?.role !== 'employee';
-  const isOwner = ticket?.createdBy?._id === user?._id;
+  const isStaff = ['it_support', 'it_admin', 'super_admin'].includes(user?.role);
+  const isOwner = ticket?.createdBy?._id?.toString() === user?._id?.toString();
 
   const fetchTicket = useCallback(async () => {
     try {

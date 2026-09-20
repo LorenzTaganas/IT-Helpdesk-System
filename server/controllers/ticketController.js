@@ -3,6 +3,17 @@ const Ticket = require('../models/Ticket');
 const User = require('../models/User');
 const Department = require('../models/Department');
 
+const STAFF_ROLES = ['it_support', 'it_admin', 'super_admin'];
+const VALID_STATUSES = ['open', 'in_progress', 'pending_user', 'resolved', 'closed'];
+const VALID_PRIORITIES = ['low', 'medium', 'high', 'critical'];
+
+const getTicketQuery = (id) => {
+  const byObjectId = /^[0-9a-fA-F]{24}$/.test(id) ? id : null;
+  return { $or: [{ _id: byObjectId }, { ticketId: String(id).toUpperCase() }] };
+};
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // ─────────────────────────────────────────────────────────────────────────────
 // @route   POST /api/tickets
 // @desc    Create a new support ticket
@@ -99,7 +110,7 @@ const getTickets = async (req, res) => {
 
     // Search by title, ticketId, or description
     if (search && search.trim()) {
-      const searchRegex = new RegExp(search.trim(), 'i');
+      const searchRegex = new RegExp(escapeRegex(search.trim()), 'i');
       query.$or = [
         { ticketId: searchRegex },
         { title: searchRegex },
@@ -107,8 +118,8 @@ const getTickets = async (req, res) => {
       ];
     }
 
-    const pageNum = Math.max(1, parseInt(page, 10));
-    const limitNum = Math.max(1, Math.min(100, parseInt(limit, 10)));
+    const pageNum = Math.max(1, Number.parseInt(page, 10) || 1);
+    const limitNum = Math.max(1, Math.min(100, Number.parseInt(limit, 10) || 20));
     const skip = (pageNum - 1) * limitNum;
 
     const [tickets, total] = await Promise.all([
@@ -197,7 +208,7 @@ const getTicketById = async (req, res) => {
     const { id } = req.params;
 
     let ticket = await Ticket.findOne({
-      $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { ticketId: id.toUpperCase() }],
+      ...getTicketQuery(id),
     })
       .populate('createdBy', 'firstName lastName email employeeId role')
       .populate('assignedTo', 'firstName lastName email employeeId role')
@@ -240,7 +251,7 @@ const updateTicket = async (req, res) => {
     const { status, priority, assignedTo, resolutionNotes } = req.body;
 
     const ticket = await Ticket.findOne({
-      $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { ticketId: id.toUpperCase() }],
+      ...getTicketQuery(id),
     });
 
     if (!ticket) {
@@ -248,7 +259,12 @@ const updateTicket = async (req, res) => {
     }
 
     const isEmployee = req.user.role === 'employee';
+    const isStaff = STAFF_ROLES.includes(req.user.role);
     const isOwner = ticket.createdBy.toString() === req.user._id.toString();
+
+    if (!isEmployee && !isStaff) {
+      return res.status(403).json({ message: 'Your role cannot update tickets' });
+    }
 
     // Employees can only close their own tickets
     if (isEmployee) {
@@ -267,7 +283,26 @@ const updateTicket = async (req, res) => {
     }
 
     // IT Support & Admin updates
-    if (status && ['open', 'in_progress', 'pending_user', 'resolved', 'closed'].includes(status)) {
+    if (status && !VALID_STATUSES.includes(status)) {
+      return res.status(400).json({ message: 'Invalid ticket status' });
+    }
+
+    if (priority && !VALID_PRIORITIES.includes(priority)) {
+      return res.status(400).json({ message: 'Invalid ticket priority' });
+    }
+
+    if (assignedTo !== undefined && assignedTo !== null && assignedTo !== '' && !/^[0-9a-fA-F]{24}$/.test(assignedTo)) {
+      return res.status(400).json({ message: 'Invalid assignee' });
+    }
+
+    if (assignedTo) {
+      const assignee = await User.findOne({ _id: assignedTo, role: { $in: STAFF_ROLES }, status: 'active' }).select('_id');
+      if (!assignee) {
+        return res.status(400).json({ message: 'Assignee must be an active IT staff member' });
+      }
+    }
+
+    if (status) {
       ticket.status = status;
       if (status === 'resolved' && !ticket.resolvedAt) {
         ticket.resolvedAt = new Date();
@@ -277,7 +312,7 @@ const updateTicket = async (req, res) => {
       }
     }
 
-    if (priority && ['low', 'medium', 'high', 'critical'].includes(priority)) {
+    if (priority) {
       ticket.priority = priority;
     }
 
@@ -324,7 +359,7 @@ const addComment = [
       const { text, isInternal } = req.body;
 
       const ticket = await Ticket.findOne({
-        $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { ticketId: id.toUpperCase() }],
+        ...getTicketQuery(id),
       });
 
       if (!ticket) {
@@ -336,6 +371,10 @@ const addComment = [
 
       if (isEmployee && !isOwner) {
         return res.status(403).json({ message: 'Access denied' });
+      }
+
+      if (!isEmployee && !STAFF_ROLES.includes(req.user.role)) {
+        return res.status(403).json({ message: 'Your role cannot comment on tickets' });
       }
 
       // Employees cannot post internal notes

@@ -7,6 +7,7 @@ import Topbar from './Topbar';
 const PAGE_TITLES = {
   '/dashboard':   'Dashboard',
   '/tickets':     'Tickets',
+  '/tickets/assigned': 'My Assigned Tickets',
   '/tickets/new': 'Create Ticket',
   '/assets':      'Assets',
   '/employees':   'Employees',

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ticketService from '../../services/ticketService';
 import {
@@ -95,6 +95,7 @@ const getStatusBadge = (status) => {
 
 const TicketListPage = () => {
   const { user } = useAuth();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [tickets, setTickets] = useState([]);
@@ -109,7 +110,9 @@ const TicketListPage = () => {
   const searchInput = searchParams.get('search') || '';
   const [searchTerm, setSearchTerm] = useState(searchInput);
 
-  const isStaff = user?.role !== 'employee';
+  const isStaff = ['it_support', 'it_admin', 'super_admin'].includes(user?.role);
+  const isAssignedQueue = location.pathname === '/tickets/assigned';
+  const effectiveAssignedTo = isAssignedQueue ? 'me' : assignedToFilter;
 
   const fetchTickets = useCallback(async () => {
     try {
@@ -118,7 +121,7 @@ const TicketListPage = () => {
       if (statusFilter !== 'all') params.status = statusFilter;
       if (categoryFilter !== 'all') params.category = categoryFilter;
       if (priorityFilter !== 'all') params.priority = priorityFilter;
-      if (assignedToFilter) params.assignedTo = assignedToFilter;
+      if (effectiveAssignedTo) params.assignedTo = effectiveAssignedTo;
       if (searchInput) params.search = searchInput;
 
       const [data, statsData] = await Promise.all([
@@ -134,7 +137,7 @@ const TicketListPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, categoryFilter, priorityFilter, assignedToFilter, searchInput]);
+  }, [statusFilter, categoryFilter, priorityFilter, effectiveAssignedTo, searchInput]);
 
   useEffect(() => {
     fetchTickets();
@@ -174,10 +177,12 @@ const TicketListPage = () => {
         <div>
           <h1 className="page-title flex items-center gap-2.5">
             <TicketIcon className="text-blue-600" size={26} />
-            {isStaff ? 'Ticket Queue' : 'My Support Tickets'}
+            {isAssignedQueue ? 'My Assigned Tickets' : isStaff ? 'Ticket Queue' : 'My Support Tickets'}
           </h1>
           <p className="page-subtitle">
-            {isStaff
+            {isAssignedQueue
+              ? 'Tickets currently assigned to you for action.'
+              : isStaff
               ? 'Triage, assign, and manage employee technical support requests.'
               : 'View and track the resolution of your submitted IT requests.'}
           </p>
@@ -263,7 +268,7 @@ const TicketListPage = () => {
                 updateFilter('assignedTo', assignedToFilter === 'me' ? '' : 'me')
               }
               className={`ml-auto px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
-                assignedToFilter === 'me'
+                effectiveAssignedTo === 'me'
                   ? 'bg-purple-600 text-white shadow-sm'
                   : 'text-purple-700 bg-purple-50 hover:bg-purple-100'
               }`}
@@ -341,6 +346,8 @@ const TicketListPage = () => {
             <p className="text-sm text-slate-500 mt-1">
               {hasActiveFilters
                 ? 'Try adjusting your search or active filters.'
+                : isAssignedQueue
+                ? 'No tickets are currently assigned to you.'
                 : "You haven't filed any support tickets yet."}
             </p>
             {hasActiveFilters ? (
@@ -356,7 +363,7 @@ const TicketListPage = () => {
           </div>
         ) : (
           <div className="table-container">
-            <table className="data-table">
+            <table className="data-table ticket-table">
               <thead>
                 <tr>
                   <th style={{ width: '120px' }}>ID</th>

@@ -164,7 +164,7 @@ const DashboardPage = () => {
           </div>
         ) : (
           <div className="table-container">
-            <table className="data-table">
+            <table className="data-table dashboard-table">
               <thead>
                 <tr>
                   <th style={{ width: '110px' }}>ID</th>
