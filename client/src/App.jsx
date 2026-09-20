@@ -8,6 +8,11 @@ import DashboardPage from './pages/dashboard/DashboardPage';
 import TicketListPage from './pages/tickets/TicketListPage';
 import CreateTicketPage from './pages/tickets/CreateTicketPage';
 import TicketDetailPage from './pages/tickets/TicketDetailPage';
+import AssetsPage from './pages/assets/AssetsPage';
+import AssetDetailPage from './pages/assets/AssetDetailPage';
+import EmployeesPage from './pages/employees/EmployeesPage';
+import EmployeeDetailPage from './pages/employees/EmployeeDetailPage';
+import DepartmentsPage from './pages/departments/DepartmentsPage';
 
 // Placeholder pages — will be replaced in later phases
 const ComingSoon = ({ title }) => (
@@ -51,11 +56,13 @@ function App() {
               <Route path="/tickets/new" element={<CreateTicketPage />} />
               <Route path="/tickets/assigned" element={<TicketListPage />} />
               <Route path="/tickets/:id" element={<TicketDetailPage />} />
-              <Route path="/assets" element={<ComingSoon title="Assets" />} />
-              <Route path="/assets/:id" element={<ComingSoon title="Asset Detail" />} />
-              <Route path="/employees" element={<ComingSoon title="Employees" />} />
-              <Route path="/employees/:id" element={<ComingSoon title="Employee Detail" />} />
-              <Route path="/departments" element={<ComingSoon title="Departments" />} />
+              <Route path="/assets" element={<AssetsPage />} />
+              <Route path="/assets/new" element={<AssetDetailPage />} />
+              <Route path="/assets/:id" element={<AssetDetailPage />} />
+              <Route path="/employees" element={<EmployeesPage />} />
+              <Route path="/employees/new" element={<EmployeeDetailPage />} />
+              <Route path="/employees/:id" element={<EmployeeDetailPage />} />
+              <Route path="/departments" element={<DepartmentsPage />} />
               <Route path="/reports" element={<ComingSoon title="Reports" />} />
               <Route path="/audit-logs" element={<ComingSoon title="Audit Logs" />} />
               <Route path="/settings" element={<ComingSoon title="Settings" />} />

@@ -24,6 +24,7 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const Department = require('../models/Department');
 const Ticket = require('../models/Ticket');
+const Asset = require('../models/Asset');
 
 const connectDB = async () => {
   try {
@@ -43,6 +44,7 @@ const seed = async () => {
   await User.deleteMany({});
   await Department.deleteMany({});
   await Ticket.deleteMany({});
+  await Asset.deleteMany({});
   console.log('✅ Cleared Users, Departments, and Tickets.');
 
   // ── Create Departments ────────────────────────────────────────────────────
@@ -321,6 +323,61 @@ const seed = async () => {
   }
 
   console.log(`\n✅ Created ${ticketsToCreate.length} demo tickets.\n`);
+
+  console.log('💻 Creating demo assets...');
+  const assetsToCreate = [
+    {
+      name: 'Lenovo ThinkPad T14 Gen 3',
+      category: 'laptop',
+      status: 'assigned',
+      manufacturer: 'Lenovo',
+      model: 'ThinkPad T14 Gen 3',
+      serialNumber: 'PF-IT-0001',
+      assignedTo: hrEmployee._id,
+      department: hrEmployee.department,
+      location: 'Human Resources',
+      purchaseDate: new Date('2024-02-12'),
+      warrantyExpires: new Date('2027-02-12'),
+    },
+    {
+      name: 'Dell UltraSharp 27 Monitor',
+      category: 'monitor',
+      status: 'available',
+      manufacturer: 'Dell',
+      model: 'U2722D',
+      serialNumber: 'DL-MON-0001',
+      location: 'IT Storage Room',
+    },
+    {
+      name: 'HP LaserJet Pro M404dn',
+      category: 'printer',
+      status: 'maintenance',
+      manufacturer: 'HP',
+      model: 'LaserJet Pro M404dn',
+      serialNumber: 'HP-PRN-0001',
+      location: 'Finance Office',
+      notes: 'Paper feed roller replacement pending.',
+    },
+    {
+      name: 'iPhone 14 Corporate Device',
+      category: 'mobile',
+      status: 'assigned',
+      manufacturer: 'Apple',
+      model: 'iPhone 14',
+      serialNumber: 'APL-MOB-0001',
+      assignedTo: supportUser._id,
+      department: supportUser.department,
+      location: 'IT Department',
+    },
+  ];
+
+  for (const assetData of assetsToCreate) {
+    const asset = new Asset(assetData);
+    await asset.save();
+    console.log(`  ✓ Created asset: [${asset.assetTag}] ${asset.name}`);
+  }
+
+  console.log(`✅ Created ${assetsToCreate.length} demo assets.\n`);
 
   console.log('═══════════════════════════════════════════════════════════');
   console.log('  DEMO ACCOUNTS');
