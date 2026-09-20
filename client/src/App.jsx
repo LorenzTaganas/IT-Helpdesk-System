@@ -13,6 +13,7 @@ import AssetDetailPage from './pages/assets/AssetDetailPage';
 import EmployeesPage from './pages/employees/EmployeesPage';
 import EmployeeDetailPage from './pages/employees/EmployeeDetailPage';
 import DepartmentsPage from './pages/departments/DepartmentsPage';
+import ReportsPage from './pages/reports/ReportsPage';
 
 // Placeholder pages — will be replaced in later phases
 const ComingSoon = ({ title }) => (
@@ -63,7 +64,7 @@ function App() {
               <Route path="/employees/new" element={<EmployeeDetailPage />} />
               <Route path="/employees/:id" element={<EmployeeDetailPage />} />
               <Route path="/departments" element={<DepartmentsPage />} />
-              <Route path="/reports" element={<ComingSoon title="Reports" />} />
+              <Route path="/reports" element={<ReportsPage />} />
               <Route path="/audit-logs" element={<ComingSoon title="Audit Logs" />} />
               <Route path="/settings" element={<ComingSoon title="Settings" />} />
               <Route path="/profile" element={<ComingSoon title="My Profile" />} />
