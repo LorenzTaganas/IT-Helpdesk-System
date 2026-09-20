@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Department = require('../models/Department');
 const Ticket = require('../models/Ticket');
 const Asset = require('../models/Asset');
+const writeAuditLog = require('../utils/audit');
 
 const ROLES = ['employee', 'it_support', 'it_admin', 'super_admin'];
 const STATUSES = ['active', 'inactive'];
@@ -86,6 +87,7 @@ const createUser = [
         position: req.body.position || '',
       });
       const safeUser = await User.findById(user._id).select(userFields).populate('department', 'name');
+      await writeAuditLog({ actor: req.user._id, action: 'create', entityType: 'user', entityId: user._id, entityLabel: user.employeeId, summary: `${req.user.firstName} ${req.user.lastName} created employee ${user.employeeId}` });
       res.status(201).json({ message: 'Employee created successfully', user: safeUser });
     } catch (error) {
       if (error.code === 11000) return res.status(409).json({ message: 'Email or employee ID already exists' });
@@ -108,6 +110,7 @@ const updateUser = [
       });
       await user.save();
       const safeUser = await User.findById(user._id).select(userFields).populate('department', 'name');
+      await writeAuditLog({ actor: req.user._id, action: user.status === 'inactive' ? 'deactivate' : 'update', entityType: 'user', entityId: user._id, entityLabel: user.employeeId, summary: `${req.user.firstName} ${req.user.lastName} updated employee ${user.employeeId}` });
       res.json({ message: 'Employee updated successfully', user: safeUser });
     } catch (error) {
       if (error.code === 11000) return res.status(409).json({ message: 'Email or employee ID already exists' });

@@ -14,6 +14,8 @@ import EmployeesPage from './pages/employees/EmployeesPage';
 import EmployeeDetailPage from './pages/employees/EmployeeDetailPage';
 import DepartmentsPage from './pages/departments/DepartmentsPage';
 import ReportsPage from './pages/reports/ReportsPage';
+import AuditLogsPage from './pages/audit/AuditLogsPage';
+import ProfilePage from './pages/profile/ProfilePage';
 
 // Placeholder pages — will be replaced in later phases
 const ComingSoon = ({ title }) => (
@@ -58,16 +60,16 @@ function App() {
               <Route path="/tickets/assigned" element={<TicketListPage />} />
               <Route path="/tickets/:id" element={<TicketDetailPage />} />
               <Route path="/assets" element={<AssetsPage />} />
-              <Route path="/assets/new" element={<AssetDetailPage />} />
+              <Route path="/assets/new" element={<AssetDetailPage isCreate />} />
               <Route path="/assets/:id" element={<AssetDetailPage />} />
               <Route path="/employees" element={<EmployeesPage />} />
-              <Route path="/employees/new" element={<EmployeeDetailPage />} />
+              <Route path="/employees/new" element={<EmployeeDetailPage isCreate />} />
               <Route path="/employees/:id" element={<EmployeeDetailPage />} />
               <Route path="/departments" element={<DepartmentsPage />} />
               <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/audit-logs" element={<ComingSoon title="Audit Logs" />} />
+              <Route path="/audit-logs" element={<AuditLogsPage />} />
               <Route path="/settings" element={<ComingSoon title="Settings" />} />
-              <Route path="/profile" element={<ComingSoon title="My Profile" />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Route>
           </Route>
 

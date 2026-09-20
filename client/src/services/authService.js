@@ -20,4 +20,9 @@ export const authService = {
     const response = await api.get('/auth/me');
     return response.data; // { user }
   },
+
+  updateProfile: async (profileData) => {
+    const response = await api.patch('/auth/me', profileData);
+    return response.data;
+  },
 };

@@ -13,11 +13,11 @@ const EMPTY_FORM = {
   assignedTo: '', purchaseDate: '', warrantyExpires: '', location: '', notes: '',
 };
 
-const AssetDetailPage = () => {
+const AssetDetailPage = ({ isCreate = false }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isNew = id === 'new';
+  const isNew = isCreate || id === 'new';
   const isStaff = ['it_support', 'it_admin', 'super_admin'].includes(user?.role);
   const [form, setForm] = useState(EMPTY_FORM);
   const [asset, setAsset] = useState(null);

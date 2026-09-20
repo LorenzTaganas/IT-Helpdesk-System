@@ -9,11 +9,11 @@ import toast from 'react-hot-toast';
 const EMPTY = { firstName: '', lastName: '', email: '', password: '', role: 'employee', status: 'active', department: '', position: '' };
 const ROLES = ['employee', 'it_support', 'it_admin', 'super_admin'];
 
-const EmployeeDetailPage = () => {
+const EmployeeDetailPage = ({ isCreate = false }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const isNew = id === 'new';
+  const isNew = isCreate || id === 'new';
   const canManage = ['it_admin', 'super_admin'].includes(user?.role);
   const [form, setForm] = useState(EMPTY);
   const [employee, setEmployee] = useState(null);

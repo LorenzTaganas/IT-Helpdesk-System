@@ -2,6 +2,7 @@ const { body, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const Asset = require('../models/Asset');
 const User = require('../models/User');
+const writeAuditLog = require('../utils/audit');
 
 const CATEGORIES = ['laptop', 'desktop', 'monitor', 'printer', 'mobile', 'network', 'software', 'other'];
 const STATUSES = ['available', 'assigned', 'maintenance', 'retired'];
@@ -84,6 +85,7 @@ const createAsset = [
       if (error) return res.status(400).json({ message: error });
 
       const asset = await Asset.create(update);
+      await writeAuditLog({ actor: req.user._id, action: 'create', entityType: 'asset', entityId: asset._id, entityLabel: asset.assetTag, summary: `${req.user.firstName} ${req.user.lastName} created asset ${asset.assetTag}` });
       const populated = await populateAsset(Asset.findById(asset._id));
       res.status(201).json({ message: 'Asset created successfully', asset: populated });
     } catch (err) {
@@ -192,6 +194,7 @@ const updateAsset = [
       if (error) return res.status(400).json({ message: error });
       Object.assign(asset, update);
       await asset.save();
+      await writeAuditLog({ actor: req.user._id, action: update.assignedTo ? 'assign' : 'update', entityType: 'asset', entityId: asset._id, entityLabel: asset.assetTag, summary: `${req.user.firstName} ${req.user.lastName} updated asset ${asset.assetTag}`, metadata: { status: update.status, assignedTo: update.assignedTo } });
 
       const populated = await populateAsset(Asset.findById(asset._id));
       res.json({ message: 'Asset updated successfully', asset: populated });

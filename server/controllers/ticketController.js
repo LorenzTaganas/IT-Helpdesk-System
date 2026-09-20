@@ -2,6 +2,7 @@ const { body, validationResult } = require('express-validator');
 const Ticket = require('../models/Ticket');
 const User = require('../models/User');
 const Department = require('../models/Department');
+const writeAuditLog = require('../utils/audit');
 
 const STAFF_ROLES = ['it_support', 'it_admin', 'super_admin'];
 const VALID_STATUSES = ['open', 'in_progress', 'pending_user', 'resolved', 'closed'];
@@ -44,6 +45,14 @@ const createTicket = [
       });
 
       await ticket.save();
+      await writeAuditLog({
+        actor: req.user._id,
+        action: 'create',
+        entityType: 'ticket',
+        entityId: ticket._id,
+        entityLabel: ticket.ticketId,
+        summary: `${req.user.firstName} ${req.user.lastName} created ticket ${ticket.ticketId}`,
+      });
 
       const populatedTicket = await Ticket.findById(ticket._id)
         .populate('createdBy', 'firstName lastName email employeeId role')
@@ -326,6 +335,16 @@ const updateTicket = async (req, res) => {
 
     await ticket.save();
 
+    await writeAuditLog({
+      actor: req.user._id,
+      action: assignedTo !== undefined ? 'assign' : status ? 'status_change' : 'update',
+      entityType: 'ticket',
+      entityId: ticket._id,
+      entityLabel: ticket.ticketId,
+      summary: `${req.user.firstName} ${req.user.lastName} updated ticket ${ticket.ticketId}`,
+      metadata: { status, priority, assignedTo },
+    });
+
     const updated = await Ticket.findById(ticket._id)
       .populate('createdBy', 'firstName lastName email employeeId')
       .populate('assignedTo', 'firstName lastName email employeeId')
@@ -392,6 +411,16 @@ const addComment = [
       }
 
       await ticket.save();
+
+      await writeAuditLog({
+        actor: req.user._id,
+        action: 'comment',
+        entityType: 'ticket',
+        entityId: ticket._id,
+        entityLabel: ticket.ticketId,
+        summary: `${req.user.firstName} ${req.user.lastName} added a comment to ${ticket.ticketId}`,
+        metadata: { internal: internalFlag },
+      });
 
       const populated = await Ticket.findById(ticket._id)
         .populate('comments.author', 'firstName lastName email employeeId role avatar');

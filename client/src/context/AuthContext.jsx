@@ -37,6 +37,12 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const refreshUser = async () => {
+    const data = await authService.getMe();
+    setUser(data.user);
+    return data.user;
+  };
+
   // Helper to check role
   const hasRole = (...roles) => {
     return user && roles.includes(user.role);
@@ -47,6 +53,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     logout,
+    refreshUser,
     hasRole,
     isAuthenticated: !!user,
   };

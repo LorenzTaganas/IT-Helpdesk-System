@@ -2,6 +2,7 @@ const { body, validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const Department = require('../models/Department');
 const User = require('../models/User');
+const writeAuditLog = require('../utils/audit');
 
 const departmentValidation = [
   body('name').trim().notEmpty().withMessage('Department name is required').isLength({ max: 100 }).withMessage('Department name must be 100 characters or less'),
@@ -37,6 +38,7 @@ const createDepartment = [
     try {
       const department = await Department.create({ name: req.body.name, description: req.body.description || '', head: req.body.head || null });
       const populated = await Department.findById(department._id).populate('head', 'firstName lastName employeeId');
+      await writeAuditLog({ actor: req.user._id, action: 'create', entityType: 'department', entityId: department._id, entityLabel: department.name, summary: `${req.user.firstName} ${req.user.lastName} created department ${department.name}` });
       res.status(201).json({ message: 'Department created successfully', department: populated });
     } catch (error) {
       if (error.code === 11000) return res.status(409).json({ message: 'Department name already exists' });
@@ -59,6 +61,7 @@ const updateDepartment = [
       });
       await department.save();
       const populated = await Department.findById(department._id).populate('head', 'firstName lastName employeeId');
+      await writeAuditLog({ actor: req.user._id, action: 'update', entityType: 'department', entityId: department._id, entityLabel: department.name, summary: `${req.user.firstName} ${req.user.lastName} updated department ${department.name}` });
       res.json({ message: 'Department updated successfully', department: populated });
     } catch (error) {
       if (error.code === 11000) return res.status(409).json({ message: 'Department name already exists' });
