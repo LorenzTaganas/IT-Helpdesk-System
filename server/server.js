@@ -12,6 +12,7 @@ const departmentRoutes = require('./routes/departmentRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 const auditRoutes = require('./routes/auditRoutes');
 const settingRoutes = require('./routes/settingRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 const errorHandler = require('./middleware/errorHandler');
 
 // Connect to MongoDB
@@ -24,6 +25,7 @@ require('./models/Ticket');
 require('./models/Asset');
 require('./models/AuditLog');
 require('./models/Setting');
+require('./models/Notification');
 
 const app = express();
 
@@ -65,6 +67,7 @@ app.use('/api/departments', departmentRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/audit-logs', auditRoutes);
 app.use('/api/settings', settingRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

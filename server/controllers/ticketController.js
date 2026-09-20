@@ -3,6 +3,7 @@ const Ticket = require('../models/Ticket');
 const User = require('../models/User');
 const Department = require('../models/Department');
 const writeAuditLog = require('../utils/audit');
+const notifyUsers = require('../utils/notifications');
 
 const STAFF_ROLES = ['it_support', 'it_admin', 'super_admin'];
 const VALID_STATUSES = ['open', 'in_progress', 'pending_user', 'resolved', 'closed'];
@@ -45,6 +46,13 @@ const createTicket = [
       });
 
       await ticket.save();
+      const staffUsers = await User.find({ role: { $in: STAFF_ROLES }, status: 'active' }).select('_id').lean();
+      await notifyUsers(staffUsers.map((staff) => staff._id), {
+        type: 'ticket_created',
+        title: 'New support ticket',
+        message: `${req.user.firstName} ${req.user.lastName} created ${ticket.ticketId}`,
+        link: `/tickets/${ticket.ticketId}`,
+      });
       await writeAuditLog({
         actor: req.user._id,
         action: 'create',
@@ -334,6 +342,12 @@ const updateTicket = async (req, res) => {
     }
 
     await ticket.save();
+    await notifyUsers([ticket.createdBy, ticket.assignedTo].filter((recipient) => recipient?.toString() !== req.user._id.toString()), {
+      type: assignedTo !== undefined ? 'ticket_assigned' : 'ticket_updated',
+      title: assignedTo !== undefined ? 'Ticket assignment updated' : 'Ticket updated',
+      message: `${req.user.firstName} ${req.user.lastName} updated ${ticket.ticketId}`,
+      link: `/tickets/${ticket.ticketId}`,
+    });
 
     await writeAuditLog({
       actor: req.user._id,
@@ -411,6 +425,12 @@ const addComment = [
       }
 
       await ticket.save();
+      await notifyUsers([ticket.createdBy, ticket.assignedTo].filter((recipient) => recipient?.toString() !== req.user._id.toString()), {
+        type: 'ticket_reply',
+        title: 'New ticket reply',
+        message: `${req.user.firstName} ${req.user.lastName} replied to ${ticket.ticketId}`,
+        link: `/tickets/${ticket.ticketId}`,
+      });
 
       await writeAuditLog({
         actor: req.user._id,
