@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, Monitor, Loader2, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import logo from '../../assets/supporthub.png';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -59,12 +60,9 @@ const LoginPage = () => {
         <div className="relative z-10">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-12">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6)' }}>
-              <Monitor size={24} color="#fff" />
-            </div>
+            <img src={logo} alt="SupportHub" className="w-12 h-12 rounded-xl object-cover" />
             <div>
-              <h1 className="text-2xl font-bold text-white">ITFlow</h1>
+              <h1 className="text-2xl font-bold text-white">SupportHub</h1>
               <p className="text-xs text-slate-400">IT Helpdesk & Asset Management</p>
             </div>
           </div>
@@ -102,12 +100,9 @@ const LoginPage = () => {
 
           {/* Mobile logo */}
           <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6)' }}>
-              <Monitor size={20} color="#fff" />
-            </div>
+            <img src={logo} alt="SupportHub" className="w-10 h-10 rounded-xl object-cover" />
             <div>
-              <h1 className="text-xl font-bold text-white">ITFlow</h1>
+              <h1 className="text-xl font-bold text-white">SupportHub</h1>
               <p className="text-xs text-slate-400">IT Helpdesk & Asset Management</p>
             </div>
           </div>
@@ -253,7 +248,7 @@ const LoginPage = () => {
 
           {/* Footer */}
           <p className="text-center text-xs text-slate-600 mt-6">
-            ITFlow — Portfolio Project · For Demonstration Purposes Only
+            SupportHub — Portfolio Project
           </p>
         </div>
       </div>

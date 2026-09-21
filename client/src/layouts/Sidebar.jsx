@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/supporthub.png';
 import {
   Monitor, LayoutDashboard, Ticket, Plus, Package,
   Users, Building2, BarChart3, ScrollText, Settings,
@@ -85,12 +86,9 @@ const Sidebar = () => {
       {/* Logo */}
       <div className="sidebar-logo">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6)' }}>
-            <Cpu size={16} color="#fff" />
-          </div>
+          <img src={logo} alt="SupportHub" className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" />
           <div>
-            <p className="text-white font-bold text-sm leading-none">ITFlow</p>
+            <p className="text-white font-bold text-sm leading-none">SupportHub</p>
             <p className="text-slate-500 text-xs mt-0.5">Helpdesk System</p>
           </div>
         </div>
