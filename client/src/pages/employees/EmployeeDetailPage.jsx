@@ -19,6 +19,7 @@ const EmployeeDetailPage = ({ isCreate = false }) => {
   const [employee, setEmployee] = useState(null);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(!isNew);
+  const [loadError, setLoadError] = useState('');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const EmployeeDetailPage = ({ isCreate = false }) => {
 
   useEffect(() => {
     if (isNew) return;
-    userService.getUserById(id).then((data) => { setEmployee(data); setForm({ firstName: data.firstName || '', lastName: data.lastName || '', email: data.email || '', password: '', role: data.role || 'employee', status: data.status || 'active', department: data.department?._id || '', position: data.position || '' }); }).catch((error) => { toast.error(error.response?.data?.message || 'Employee not found'); navigate('/employees'); }).finally(() => setLoading(false));
+    userService.getUserById(id).then((data) => { setEmployee(data); setForm({ firstName: data.firstName || '', lastName: data.lastName || '', email: data.email || '', password: '', role: data.role || 'employee', status: data.status || 'active', department: data.department?._id || '', position: data.position || '' }); }).catch((error) => { const message = error.response?.data?.message || 'Employee could not be loaded'; setLoadError(message); toast.error(message); }).finally(() => setLoading(false));
   }, [id, isNew, navigate]);
 
   const update = (field, value) => setForm((current) => ({ ...current, [field]: value }));
@@ -41,11 +42,12 @@ const EmployeeDetailPage = ({ isCreate = false }) => {
       if (!payload.password) delete payload.password;
       const response = isNew ? await userService.createUser(payload) : await userService.updateUser(id, payload);
       toast.success(isNew ? 'Employee created' : 'Employee updated');
-      navigate(`/employees/${response.user._id}`, { replace: true });
+      navigate(isNew ? '/employees' : `/employees/${response.user._id}`, { replace: true });
     } catch (error) { toast.error(error.response?.data?.message || 'Failed to save employee'); } finally { setSaving(false); }
   };
 
   if (loading) return <div className="p-12 text-center text-slate-500">Loading employee...</div>;
+  if (loadError) return <div className="mx-auto max-w-xl space-y-4 p-12 text-center"><UserRound size={32} className="mx-auto text-slate-300" /><h1 className="font-bold text-slate-900">Unable to load employee</h1><p className="text-sm text-slate-500">{loadError}</p><Link to="/employees" className="btn btn-secondary">Back to Employees</Link></div>;
   if (!canManage && isNew) { navigate('/employees', { replace: true }); return null; }
 
   return <div className="mx-auto max-w-4xl space-y-6"><Link to="/employees" className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800"><ArrowLeft size={16} /> Back to Employees</Link><div className="page-header"><div><h1 className="page-title flex items-center gap-2.5"><UserRound className="text-blue-600" size={26} />{isNew ? 'Add Employee' : `${employee.firstName} ${employee.lastName}`}</h1><p className="page-subtitle">{isNew ? 'Create a new system account.' : `${employee.employeeId} · ${employee.email}`}</p></div></div>

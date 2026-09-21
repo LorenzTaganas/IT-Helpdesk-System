@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Monitor, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const { login } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -13,9 +12,6 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // After login, go to where they were trying to go, or dashboard
-  const from = location.state?.from?.pathname || '/dashboard';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +24,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       await login(email.trim(), password);
-      navigate(from, { replace: true });
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed. Please try again.';
       setError(message);
