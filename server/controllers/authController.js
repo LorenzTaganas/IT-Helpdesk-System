@@ -131,10 +131,10 @@ const getMe = async (req, res) => {
 };
 
 const updateProfile = [
-  body('firstName').optional().trim().notEmpty().withMessage('First name cannot be empty'),
-  body('lastName').optional().trim().notEmpty().withMessage('Last name cannot be empty'),
+  body('firstName').optional().trim().notEmpty().withMessage('First name cannot be empty').isLength({ min: 2, max: 60 }).withMessage('First name must be between 2 and 60 characters'),
+  body('lastName').optional().trim().notEmpty().withMessage('Last name cannot be empty').isLength({ min: 2, max: 60 }).withMessage('Last name must be between 2 and 60 characters'),
   body('email').optional().isEmail().withMessage('Please enter a valid email.').normalizeEmail(),
-  body('newPassword').optional().isLength({ min: 6 }).withMessage('New password must be at least 6 characters'),
+  body('newPassword').optional().isLength({ min: 8, max: 128 }).withMessage('New password must be between 8 and 128 characters'),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ message: errors.array()[0].msg });

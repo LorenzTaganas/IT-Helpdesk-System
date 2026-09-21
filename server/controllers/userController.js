@@ -11,19 +11,21 @@ const STATUSES = ['active', 'inactive'];
 const userFields = 'employeeId firstName lastName email role department position status avatar lastLogin createdAt';
 
 const userCreateValidation = [
-  body('firstName').trim().notEmpty().withMessage('First name is required'),
-  body('lastName').trim().notEmpty().withMessage('Last name is required'),
+  body('firstName').trim().notEmpty().withMessage('First name is required').isLength({ min: 2, max: 60 }).withMessage('First name must be between 2 and 60 characters'),
+  body('lastName').trim().notEmpty().withMessage('Last name is required').isLength({ min: 2, max: 60 }).withMessage('Last name must be between 2 and 60 characters'),
   body('email').isEmail().withMessage('A valid email is required').normalizeEmail(),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('password').isLength({ min: 8, max: 128 }).withMessage('Password must be between 8 and 128 characters'),
   body('role').optional().isIn(ROLES).withMessage('Invalid user role'),
   body('status').optional().isIn(STATUSES).withMessage('Invalid user status'),
 ];
 
 const userUpdateValidation = [
-  body('firstName').optional().trim().notEmpty().withMessage('First name cannot be empty'),
-  body('lastName').optional().trim().notEmpty().withMessage('Last name cannot be empty'),
+  body('firstName').optional().trim().notEmpty().withMessage('First name cannot be empty').isLength({ min: 2, max: 60 }).withMessage('First name must be between 2 and 60 characters'),
+  body('lastName').optional().trim().notEmpty().withMessage('Last name cannot be empty').isLength({ min: 2, max: 60 }).withMessage('Last name must be between 2 and 60 characters'),
   body('email').optional().isEmail().withMessage('A valid email is required').normalizeEmail(),
-  body('password').optional().isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('password').optional().isLength({ min: 8, max: 128 }).withMessage('Password must be between 8 and 128 characters'),
+  body('department').optional({ nullable: true, checkFalsy: true }).isMongoId().withMessage('Invalid department'),
+  body('position').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 100 }).withMessage('Position must be 100 characters or less'),
   body('role').optional().isIn(ROLES).withMessage('Invalid user role'),
   body('status').optional().isIn(STATUSES).withMessage('Invalid user status'),
 ];

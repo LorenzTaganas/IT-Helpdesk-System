@@ -99,17 +99,17 @@ const AssetDetailPage = ({ isCreate = false }) => {
       {isStaff ? (
         <form onSubmit={saveAsset} className="space-y-6">
           <div className="card grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="md:col-span-2"><label className="form-label">Asset Name *</label><input className="form-input" value={form.name} onChange={(e) => updateField('name', e.target.value)} placeholder="e.g. Lenovo ThinkPad T14" /></div>
+            <div className="md:col-span-2"><label className="form-label">Asset Name *</label><input required minLength={2} maxLength={150} className="form-input" value={form.name} onChange={(e) => updateField('name', e.target.value)} placeholder="e.g. Lenovo ThinkPad T14" /></div>
             <div><label className="form-label">Category *</label><select className="form-select" value={form.category} onChange={(e) => updateField('category', e.target.value)}>{CATEGORIES.map((item) => <option key={item} value={item}>{item[0].toUpperCase() + item.slice(1)}</option>)}</select></div>
             <div><label className="form-label">Status</label><select className="form-select" value={form.status} onChange={(e) => updateField('status', e.target.value)}>{STATUSES.map((item) => <option key={item} value={item}>{item[0].toUpperCase() + item.slice(1)}</option>)}</select></div>
-            <div><label className="form-label">Manufacturer</label><input className="form-input" value={form.manufacturer} onChange={(e) => updateField('manufacturer', e.target.value)} /></div>
-            <div><label className="form-label">Model</label><input className="form-input" value={form.model} onChange={(e) => updateField('model', e.target.value)} /></div>
-            <div><label className="form-label">Serial Number</label><input className="form-input" value={form.serialNumber} onChange={(e) => updateField('serialNumber', e.target.value)} /></div>
+            <div><label className="form-label">Manufacturer</label><input maxLength={100} className="form-input" value={form.manufacturer} onChange={(e) => updateField('manufacturer', e.target.value)} /></div>
+            <div><label className="form-label">Model</label><input maxLength={100} className="form-input" value={form.model} onChange={(e) => updateField('model', e.target.value)} /></div>
+            <div><label className="form-label">Serial Number</label><input maxLength={100} className="form-input" value={form.serialNumber} onChange={(e) => updateField('serialNumber', e.target.value)} /></div>
             <div><label className="form-label">Assigned User</label><select className="form-select" value={form.assignedTo} onChange={(e) => updateField('assignedTo', e.target.value)}><option value="">Unassigned</option>{users.map((item) => <option key={item._id} value={item._id}>{item.firstName} {item.lastName} · {item.employeeId}</option>)}</select></div>
             <div><label className="form-label">Purchase Date</label><input type="date" className="form-input" value={form.purchaseDate} onChange={(e) => updateField('purchaseDate', e.target.value)} /></div>
-            <div><label className="form-label">Warranty Expires</label><input type="date" className="form-input" value={form.warrantyExpires} onChange={(e) => updateField('warrantyExpires', e.target.value)} /></div>
-            <div><label className="form-label">Location</label><input className="form-input" value={form.location} onChange={(e) => updateField('location', e.target.value)} placeholder="e.g. Finance Office" /></div>
-            <div className="md:col-span-2"><label className="form-label">Notes</label><textarea className="form-textarea" value={form.notes} onChange={(e) => updateField('notes', e.target.value)} /></div>
+            <div><label className="form-label">Warranty Expires</label><input type="date" min={form.purchaseDate || undefined} className="form-input" value={form.warrantyExpires} onChange={(e) => updateField('warrantyExpires', e.target.value)} /></div>
+            <div><label className="form-label">Location</label><input maxLength={150} className="form-input" value={form.location} onChange={(e) => updateField('location', e.target.value)} placeholder="e.g. Finance Office" /></div>
+            <div className="md:col-span-2"><label className="form-label">Notes</label><textarea maxLength={2000} className="form-textarea" value={form.notes} onChange={(e) => updateField('notes', e.target.value)} /></div>
           </div>
           <div className="flex justify-end gap-3"><Link to="/assets" className="btn btn-secondary">Cancel</Link><button type="submit" disabled={saving} className="btn btn-primary"><Save size={16} />{saving ? 'Saving...' : 'Save Asset'}</button></div>
         </form>

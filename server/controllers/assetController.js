@@ -9,21 +9,27 @@ const STATUSES = ['available', 'assigned', 'maintenance', 'retired'];
 const STAFF_ROLES = ['it_support', 'it_admin', 'super_admin'];
 
 const assetValidation = [
-  body('name').trim().notEmpty().withMessage('Asset name is required').isLength({ max: 150 }).withMessage('Asset name must be 150 characters or less'),
+  body('name').trim().notEmpty().withMessage('Asset name is required').isLength({ min: 2, max: 150 }).withMessage('Asset name must be between 2 and 150 characters'),
   body('category').isIn(CATEGORIES).withMessage('Invalid asset category'),
   body('status').optional().isIn(STATUSES).withMessage('Invalid asset status'),
   body('assignedTo').optional({ nullable: true }).custom((value) => !value || mongoose.isValidObjectId(value)).withMessage('Invalid assigned user'),
-  body('purchaseDate').optional({ nullable: true }).isISO8601().withMessage('Invalid purchase date'),
-  body('warrantyExpires').optional({ nullable: true }).isISO8601().withMessage('Invalid warranty date'),
+  body('purchaseDate').optional({ nullable: true, checkFalsy: true }).isISO8601().withMessage('Invalid purchase date'),
+  body('warrantyExpires').optional({ nullable: true, checkFalsy: true }).isISO8601().withMessage('Invalid warranty date'),
+  body('serialNumber').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 100 }).withMessage('Serial number must be 100 characters or less'),
+  body('location').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 150 }).withMessage('Location must be 150 characters or less'),
+  body('notes').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 2000 }).withMessage('Notes must be 2000 characters or less'),
 ];
 
 const assetUpdateValidation = [
-  body('name').optional().trim().notEmpty().withMessage('Asset name cannot be empty').isLength({ max: 150 }).withMessage('Asset name must be 150 characters or less'),
+  body('name').optional().trim().notEmpty().withMessage('Asset name cannot be empty').isLength({ min: 2, max: 150 }).withMessage('Asset name must be between 2 and 150 characters'),
   body('category').optional().isIn(CATEGORIES).withMessage('Invalid asset category'),
   body('status').optional().isIn(STATUSES).withMessage('Invalid asset status'),
   body('assignedTo').optional({ nullable: true }).custom((value) => !value || mongoose.isValidObjectId(value)).withMessage('Invalid assigned user'),
-  body('purchaseDate').optional({ nullable: true }).isISO8601().withMessage('Invalid purchase date'),
-  body('warrantyExpires').optional({ nullable: true }).isISO8601().withMessage('Invalid warranty date'),
+  body('purchaseDate').optional({ nullable: true, checkFalsy: true }).isISO8601().withMessage('Invalid purchase date'),
+  body('warrantyExpires').optional({ nullable: true, checkFalsy: true }).isISO8601().withMessage('Invalid warranty date'),
+  body('serialNumber').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 100 }).withMessage('Serial number must be 100 characters or less'),
+  body('location').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 150 }).withMessage('Location must be 150 characters or less'),
+  body('notes').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 2000 }).withMessage('Notes must be 2000 characters or less'),
 ];
 
 const getAssetQuery = (id) => ({
@@ -48,6 +54,9 @@ const validateRequest = (req, res) => {
 
 const normalizeAssignment = async (data) => {
   const update = { ...data };
+  if (update.purchaseDate && update.warrantyExpires && new Date(update.warrantyExpires) < new Date(update.purchaseDate)) {
+    return { error: 'Warranty expiration cannot be before the purchase date' };
+  }
   if (update.assignedTo === '') update.assignedTo = null;
 
   if (update.assignedTo) {

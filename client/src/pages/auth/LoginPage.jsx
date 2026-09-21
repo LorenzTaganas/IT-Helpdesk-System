@@ -84,7 +84,7 @@ const LoginPage = () => {
             { label: 'Role-Based Access', desc: 'Secure access for all team members' },
           ].map((f) => (
             <div key={f.label} className="flex items-start gap-3 mb-4">
-              <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{ background: '#2563eb' }} />
+              <div className="w-2 h-2 rounded-full mt-2 shrink-0" style={{ background: '#2563eb' }} />
               <div>
                 <p className="text-white font-medium text-sm">{f.label}</p>
                 <p className="text-slate-400 text-sm">{f.desc}</p>
@@ -119,12 +119,12 @@ const LoginPage = () => {
             {error && (
               <div className="flex items-center gap-2 mb-4 p-3 rounded-lg text-sm"
                 style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', color: '#fca5a5' }}>
-                <AlertCircle size={16} className="flex-shrink-0" />
+                <AlertCircle size={16} className="shrink-0" />
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} noValidate>
+            <form onSubmit={handleSubmit}>
               {/* Email */}
               <div className="mb-4">
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">
@@ -145,6 +145,8 @@ const LoginPage = () => {
                   onFocus={(e) => e.target.style.borderColor = '#2563eb'}
                   onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.12)'}
                   disabled={loading}
+                   required
+                   maxLength={254}
                 />
               </div>
 
@@ -169,6 +171,9 @@ const LoginPage = () => {
                     onFocus={(e) => e.target.style.borderColor = '#2563eb'}
                     onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.12)'}
                     disabled={loading}
+                     required
+                     minLength={8}
+                     maxLength={128}
                   />
                   <button
                     type="button"

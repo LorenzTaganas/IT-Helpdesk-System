@@ -4,7 +4,7 @@ const writeAuditLog = require('../utils/audit');
 
 const settingValidation = [
   body('organizationName').trim().notEmpty().withMessage('Organization name is required'),
-  body('supportEmail').optional({ nullable: true }).isEmail().withMessage('Support email must be valid'),
+  body('supportEmail').optional({ nullable: true, checkFalsy: true }).isEmail().withMessage('Support email must be valid'),
   body('timezone').trim().notEmpty().withMessage('Timezone is required'),
   body('defaultTicketPriority').isIn(['low', 'medium', 'high', 'critical']).withMessage('Invalid default priority'),
   body('slaDays').isInt({ min: 1, max: 365 }).withMessage('SLA days must be between 1 and 365'),

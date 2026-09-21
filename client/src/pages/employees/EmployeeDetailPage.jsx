@@ -35,7 +35,7 @@ const EmployeeDetailPage = ({ isCreate = false }) => {
   const save = async (event) => {
     event.preventDefault();
     if (!canManage) return;
-    if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim() || (isNew && !form.password)) { toast.error('Complete all required fields'); return; }
+    if (form.firstName.trim().length < 2 || form.lastName.trim().length < 2 || !form.email.trim() || (isNew && form.password.length < 8)) { toast.error(isNew ? 'Complete required fields. Password must be at least 8 characters.' : 'Names must be at least 2 characters.'); return; }
     try {
       setSaving(true);
       const payload = { ...form, department: form.department || null };

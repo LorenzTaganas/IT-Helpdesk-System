@@ -180,6 +180,9 @@ const CreateTicketPage = () => {
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               className={`form-input ${errors.title ? 'border-red-500 focus:ring-red-500' : ''}`}
+               required
+               minLength={5}
+               maxLength={150}
             />
             {errors.title && <p className="form-error">{errors.title}</p>}
           </div>
@@ -270,6 +273,9 @@ const CreateTicketPage = () => {
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className={`form-textarea ${errors.description ? 'border-red-500 focus:ring-red-500' : ''}`}
+               required
+               minLength={15}
+               maxLength={5000}
             />
             {errors.description && <p className="form-error">{errors.description}</p>}
             <p className="text-xs text-slate-400 mt-1">

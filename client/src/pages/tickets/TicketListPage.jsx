@@ -145,6 +145,8 @@ const TicketListPage = () => {
 
   const updateFilter = (key, value) => {
     const newParams = new URLSearchParams(searchParams);
+    if (key === 'status') newParams.delete('priority');
+    if (key === 'priority') newParams.delete('status');
     if (value && value !== 'all') {
       newParams.set(key, value);
     } else {

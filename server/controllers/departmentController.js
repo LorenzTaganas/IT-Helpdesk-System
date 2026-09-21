@@ -5,8 +5,9 @@ const User = require('../models/User');
 const writeAuditLog = require('../utils/audit');
 
 const departmentValidation = [
-  body('name').trim().notEmpty().withMessage('Department name is required').isLength({ max: 100 }).withMessage('Department name must be 100 characters or less'),
-  body('head').optional({ nullable: true }).custom((value) => !value || mongoose.isValidObjectId(value)).withMessage('Invalid department head'),
+  body('name').trim().notEmpty().withMessage('Department name is required').isLength({ min: 2, max: 100 }).withMessage('Department name must be between 2 and 100 characters'),
+  body('description').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 500 }).withMessage('Description must be 500 characters or less'),
+  body('head').optional({ nullable: true, checkFalsy: true }).isMongoId().withMessage('Invalid department head'),
 ];
 
 const checkErrors = (req, res) => {
@@ -49,8 +50,9 @@ const createDepartment = [
 ];
 
 const updateDepartment = [
-  body('name').optional().trim().notEmpty().withMessage('Department name cannot be empty'),
-  body('head').optional({ nullable: true }).custom((value) => !value || mongoose.isValidObjectId(value)).withMessage('Invalid department head'),
+  body('name').optional().trim().notEmpty().withMessage('Department name cannot be empty').isLength({ min: 2, max: 100 }).withMessage('Department name must be between 2 and 100 characters'),
+  body('description').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 500 }).withMessage('Description must be 500 characters or less'),
+  body('head').optional({ nullable: true, checkFalsy: true }).isMongoId().withMessage('Invalid department head'),
   async (req, res) => {
     if (!checkErrors(req, res)) return;
     try {

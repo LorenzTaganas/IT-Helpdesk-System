@@ -22,8 +22,8 @@ const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 // @access  Private (All authenticated users)
 // ─────────────────────────────────────────────────────────────────────────────
 const createTicket = [
-  body('title').notEmpty().withMessage('Title is required').isLength({ max: 150 }).withMessage('Title must be 150 chars or less'),
-  body('description').notEmpty().withMessage('Description is required'),
+  body('title').trim().notEmpty().withMessage('Title is required').isLength({ min: 5, max: 150 }).withMessage('Title must be between 5 and 150 characters'),
+  body('description').trim().notEmpty().withMessage('Description is required').isLength({ min: 15, max: 5000 }).withMessage('Description must be between 15 and 5000 characters'),
   body('category').isIn(['hardware', 'software', 'network', 'access', 'email', 'other']).withMessage('Invalid category'),
   body('priority').optional().isIn(['low', 'medium', 'high', 'critical']).withMessage('Invalid priority'),
 
@@ -378,7 +378,7 @@ const updateTicket = async (req, res) => {
 // @access  Private
 // ─────────────────────────────────────────────────────────────────────────────
 const addComment = [
-  body('text').notEmpty().withMessage('Comment text is required').trim(),
+  body('text').trim().notEmpty().withMessage('Comment text is required').isLength({ max: 2000 }).withMessage('Comment must be 2000 characters or less'),
   body('isInternal').optional().isBoolean(),
 
   async (req, res) => {
