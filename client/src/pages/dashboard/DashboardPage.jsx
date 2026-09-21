@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ticketService from '../../services/ticketService';
+import reportService from '../../services/reportService';
+import ReportCharts from '../../components/ReportCharts';
 import {
   Ticket,
   Clock,
@@ -19,6 +21,7 @@ const DashboardPage = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [recentTickets, setRecentTickets] = useState([]);
+  const [reportData, setReportData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const isStaff = user?.role !== 'employee';
@@ -27,12 +30,14 @@ const DashboardPage = () => {
     const loadDashboardData = async () => {
       try {
         setLoading(true);
-        const [statsData, ticketsData] = await Promise.all([
+        const [statsData, ticketsData, reportsData] = await Promise.all([
           ticketService.getStats(),
           ticketService.getTickets({ limit: 5 }),
+          isStaff ? reportService.getReports() : Promise.resolve(null),
         ]);
         setStats(statsData);
         setRecentTickets(ticketsData.tickets || []);
+        setReportData(reportsData);
       } catch (err) {
         console.error('Failed to load dashboard metrics', err);
       } finally {
@@ -41,7 +46,7 @@ const DashboardPage = () => {
     };
 
     loadDashboardData();
-  }, []);
+  }, [isStaff]);
 
   const statCards = [
     {
@@ -131,6 +136,8 @@ const DashboardPage = () => {
           );
         })}
       </div>
+
+      {isStaff && reportData && <ReportCharts data={reportData} />}
 
       {/* Recent Tickets Table Section */}
       <div className="card space-y-4">
